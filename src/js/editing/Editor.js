@@ -248,6 +248,14 @@ define([
       }
     };
 
+    this.insertText = function ($editable, sValue) {
+      var rng = range.create();
+      recordUndo($editable);
+      rng.insertNode(document.createTextNode(sValue));
+      rng.select();
+      return sValue;
+    };
+
     /**
      * lineHeight
      * @param {jQuery} $editable

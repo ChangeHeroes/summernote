@@ -7,6 +7,7 @@ define('settings', function () {
      * options for init
      */
     options: {
+      abc: 1,
       width: null,                  // set editor width
       height: null,                 // set editable height, ex) 300
 
@@ -36,7 +37,8 @@ define('settings', function () {
         ['table', ['table']],
         ['insert', ['link', 'picture', 'video']],
         ['view', ['fullscreen', 'codeview']],
-        ['help', ['help']]
+        ['inserttext', ['mergetags']]
+
       ],
 
       // callbacks
@@ -106,6 +108,10 @@ define('settings', function () {
           'CMD+NUM6': 'formatH6',
           'CMD+ENTER': 'insertHorizontalRule'
         }
+      },
+      inserttext: {
+        mergetags: [
+        ]
       }
     },
 
@@ -209,6 +215,9 @@ define('settings', function () {
         history: {
           undo: 'Undo',
           redo: 'Redo'
+        },
+        inserttext: {
+          mergetags: 'Merge Tags'
         }
       }
     }

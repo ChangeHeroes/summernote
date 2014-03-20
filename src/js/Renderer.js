@@ -155,6 +155,18 @@ define([
       },
       redo: function (lang) {
         return '<button type="button" class="btn btn-default btn-sm btn-small" title="' + lang.history.redo + '" data-event="redo" tabindex="-1"><i class="fa fa-repeat icon-repeat"></i></button>';
+      },
+      mergetags: function (lang, textinfo) {
+        var sMarkup = '<button type="button" class="btn btn-default btn-sm btn-small dropdown-toggle" data-toggle="dropdown" title="' + lang.inserttext.mergetags + '" tabindex="-1"><span class="note-current-insertText">' + lang.inserttext.mergetags + '</span> <b class="caret"></b></button>' +
+          '<ul class="dropdown-menu">';
+        if (textinfo && textinfo.mergetags) {
+          var tags = textinfo.mergetags;
+          for (var idx = 0; idx < tags.length; idx++) {
+            sMarkup += '<li><a data-event="insertText" data-value="' + tags[idx][0] + '"><i class="fa fa-check icon-ok"></i>' + tags[idx][1] + '</a></li>';
+          }
+        }
+        sMarkup += '</ul>';
+        return sMarkup;
       }
     };
     tplPopover = function (lang) {
@@ -308,6 +320,7 @@ define([
                      '<div class="modal-header">' +
                        '<button type="button" class="close" aria-hidden="true" tabindex="-1">&times;</button>' +
                        '<h4>' + lang.image.insert + '</h4>' +
+                     '</div>' +
                      '</div>' +
                      '<div class="modal-body">' +
                        '<div class="row-fluid">' +
@@ -498,13 +511,15 @@ define([
 
       var langInfo = $.summernote.lang[options.lang];
 
+      var textInfo = options.inserttext;
+
       //04. create Toolbar
       var sToolbar = '';
       for (var idx = 0, sz = options.toolbar.length; idx < sz; idx ++) {
         var group = options.toolbar[idx];
         sToolbar += '<div class="note-' + group[0] + ' btn-group">';
         for (var i = 0, szGroup = group[1].length; i < szGroup; i++) {
-          sToolbar += tplToolbarInfo[group[1][i]](langInfo);
+          sToolbar += tplToolbarInfo[group[1][i]](langInfo, textInfo);
         }
         sToolbar += '</div>';
       }

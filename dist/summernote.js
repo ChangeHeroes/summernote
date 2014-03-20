@@ -1,12 +1,12 @@
 /**
- * Super simple wysiwyg editor on Bootstrap v0.5.1
+ * Super simple wysiwyg editor on Bootstrap v0.5.2
  * http://hackerwins.github.io/summernote/
  *
  * summernote.js
  * Copyright 2013 Alan Hong. and outher contributors
  * summernote may be freely distributed under the MIT license./
  *
- * Date: 2014-03-16T06:23Z
+ * Date: 2014-03-20T21:20Z
  */
 (function (factory) {
   /* global define */
@@ -606,12 +606,13 @@
 
   var settings = {
     // version
-    version: '0.5.1',
+    version: '0.5.2',
 
     /**
      * options for init
      */
     options: {
+      abc: 1,
       width: null,                  // set editor width
       height: null,                 // set editable height, ex) 300
 
@@ -641,7 +642,8 @@
         ['table', ['table']],
         ['insert', ['link', 'picture', 'video']],
         ['view', ['fullscreen', 'codeview']],
-        ['help', ['help']]
+        ['inserttext', ['mergetags']]
+
       ],
 
       // callbacks
@@ -711,6 +713,12 @@
           'CMD+NUM6': 'formatH6',
           'CMD+ENTER': 'insertHorizontalRule'
         }
+      },
+      inserttext: {
+        mergetags: [
+          ['|*CampaignName*|', 'Campaign Name'],
+          ['|*CampaignURL*|', 'Campaign URL']
+        ]
       }
     },
 
@@ -814,6 +822,9 @@
         history: {
           undo: 'Undo',
           redo: 'Redo'
+        },
+        inserttext: {
+          mergetags: 'Merge Tags'
         }
       }
     }
@@ -1557,6 +1568,14 @@
           return this.style.fontSize === 'medium';
         }).css('font-size', sValue + 'px');
       }
+    };
+
+    this.insertText = function ($editable, sValue) {
+      var rng = range.create();
+      recordUndo($editable);
+      rng.insertNode(document.createTextNode(sValue));
+      rng.select();
+      return sValue;
     };
 
     /**
@@ -2826,6 +2845,18 @@
       },
       redo: function (lang) {
         return '<button type="button" class="btn btn-default btn-sm btn-small" title="' + lang.history.redo + '" data-event="redo" tabindex="-1"><i class="fa fa-repeat icon-repeat"></i></button>';
+      },
+      mergetags: function (lang, textinfo) {
+        var sMarkup = '<button type="button" class="btn btn-default btn-sm btn-small dropdown-toggle" data-toggle="dropdown" title="' + lang.inserttext.mergetags + '" tabindex="-1"><span class="note-current-insertText">' + lang.inserttext.mergetags + '</span> <b class="caret"></b></button>' +
+          '<ul class="dropdown-menu">';
+        if (textinfo && textinfo.mergetags) {
+          var tags = textinfo.mergetags;
+          for (var idx = 0; idx < tags.length; idx++) {
+            sMarkup += '<li><a data-event="insertText" data-value="' + tags[idx][0] + '"><i class="fa fa-check icon-ok"></i>' + tags[idx][1] + '</a></li>';
+          }
+        }
+        sMarkup += '</ul>';
+        return sMarkup;
       }
     };
     tplPopover = function (lang) {
@@ -2980,6 +3011,7 @@
                        '<button type="button" class="close" aria-hidden="true" tabindex="-1">&times;</button>' +
                        '<h4>' + lang.image.insert + '</h4>' +
                      '</div>' +
+                     '</div>' +
                      '<div class="modal-body">' +
                        '<div class="row-fluid">' +
                          '<h5>' + lang.image.selectFromFiles + '</h5>' +
@@ -3064,7 +3096,7 @@
                        '<a class="modal-close pull-right" aria-hidden="true" tabindex="-1">' + lang.shortcut.close + '</a>' +
                        '<div class="title">' + lang.shortcut.shortcuts + '</div>' +
                        (agent.bMac ? tplShortcutTable(lang, options) : replaceMacKeys(tplShortcutTable(lang, options))) +
-                       '<p class="text-center"><a href="//hackerwins.github.io/summernote/" target="_blank">Summernote 0.5.1</a> · <a href="//github.com/HackerWins/summernote" target="_blank">Project</a> · <a href="//github.com/HackerWins/summernote/issues" target="_blank">Issues</a></p>' +
+                       '<p class="text-center"><a href="//hackerwins.github.io/summernote/" target="_blank">Summernote 0.5.2</a> · <a href="//github.com/HackerWins/summernote" target="_blank">Project</a> · <a href="//github.com/HackerWins/summernote/issues" target="_blank">Issues</a></p>' +
                      '</div>' +
                    '</div>' +
                  '</div>' +
@@ -3169,13 +3201,16 @@
 
       var langInfo = $.summernote.lang[options.lang];
 
+      var textInfo = options.inserttext;
+      console.log(options.inserttext);
+
       //04. create Toolbar
       var sToolbar = '';
       for (var idx = 0, sz = options.toolbar.length; idx < sz; idx ++) {
         var group = options.toolbar[idx];
         sToolbar += '<div class="note-' + group[0] + ' btn-group">';
         for (var i = 0, szGroup = group[1].length; i < szGroup; i++) {
-          sToolbar += tplToolbarInfo[group[1][i]](langInfo);
+          sToolbar += tplToolbarInfo[group[1][i]](langInfo, textInfo);
         }
         sToolbar += '</div>';
       }
