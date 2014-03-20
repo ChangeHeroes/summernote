@@ -24,5 +24,8 @@
   },
   "dependencies": {
     "open": "0.0.4"
-  }
+  },
+  "main": "dist/summernote.js",
+  "style": "dist/summernote.css",
+  "files": ["dist"]
 }
