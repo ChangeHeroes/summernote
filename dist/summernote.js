@@ -6,7 +6,7 @@
  * Copyright 2013 Alan Hong. and outher contributors
  * summernote may be freely distributed under the MIT license./
  *
- * Date: 2014-03-20T21:20Z
+ * Date: 2014-03-21T18:34Z
  */
 (function (factory) {
   /* global define */
@@ -716,8 +716,6 @@
       },
       inserttext: {
         mergetags: [
-          ['|*CampaignName*|', 'Campaign Name'],
-          ['|*CampaignURL*|', 'Campaign URL']
         ]
       }
     },
@@ -3202,7 +3200,6 @@
       var langInfo = $.summernote.lang[options.lang];
 
       var textInfo = options.inserttext;
-      console.log(options.inserttext);
 
       //04. create Toolbar
       var sToolbar = '';
