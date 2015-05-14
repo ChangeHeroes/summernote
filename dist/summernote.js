@@ -2315,7 +2315,8 @@
         ['table', ['table']],
         ['insert', ['link', 'picture', 'hr']],
         ['view', ['fullscreen', 'codeview']],
-        ['help', ['help']]
+        ['help', ['help']],
+        ['inserttext', ['mergetags']]
       ],
 
       // air mode: inline editor
@@ -2467,6 +2468,11 @@
           'CMD+ENTER': 'insertHorizontalRule',
           'CMD+K': 'showLinkDialog'
         }
+      },
+
+      inserttext: {
+        mergetags: [
+        ]
       }
     },
 
@@ -2573,6 +2579,9 @@
         history: {
           undo: 'Undo',
           redo: 'Redo'
+        },
+        inserttext: {
+          mergetags: 'Merge Tags'
         }
       }
     }
@@ -3992,6 +4001,14 @@
       ).call($target, this.$editable);
 
       afterCommand($editable);
+    };
+
+    this.insertMergeText = function ($editable, sValue) {
+      var rng = range.create();
+      recordUndo($editable);
+      rng.insertNode(document.createTextNode(sValue));
+      rng.select();
+      return sValue;
     };
 
     /**
@@ -5964,6 +5981,18 @@
           event: 'redo',
           title: lang.history.redo
         });
+      },
+      mergetags: function (lang, options) {
+        var sMarkup = '<button type="button" class="btn btn-default btn-sm btn-small dropdown-toggle" data-toggle="dropdown" title="' + lang.inserttext.mergetags + '" tabindex="-1"><span class="note-current-insertText">' + lang.inserttext.mergetags + '</span> <b class="caret"></b></button>' +
+          '<ul class="dropdown-menu">';
+        if (options.inserttext && options.inserttext.mergetags) {
+          var tags = options.inserttext.mergetags;
+          for (var idx = 0; idx < tags.length; idx++) {
+            sMarkup += '<li><a data-event="insertText" data-value="' + tags[idx][0] + '"><i class="fa fa-check icon-ok"></i>' + tags[idx][1] + '</a></li>';
+          }
+        }
+        sMarkup += '</ul>';
+        return sMarkup;
       },
       hr: function (lang, options) {
         return tplIconButton(options.iconPrefix + 'minus', {
